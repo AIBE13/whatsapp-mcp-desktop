@@ -1,0 +1,176 @@
+# WhatsApp MCP
+
+让 Claude 读你自己的 WhatsApp：帮你总结、找讯息、看图片、读文件、听语音、看 video。默认只读；要发讯息的话，要你自己打开，风险自负。讯息只存在你自己的电脑，而且是加密的。
+
+[English](README.md)
+
+![设定页](docs/settings-page.png)
+
+## 最简单：叫你的 AI 帮你装
+
+有用 Claude Code 的话，打开它，讲：
+
+> Set up this app for me: https://github.com/AIBE13/whatsapp-mcp-desktop
+
+它会照 [AGENTS.md](AGENTS.md) 一步一步自己做完。你只需要重开一次 Claude Code，再用手机扫一次 QR。Claude Code 这条路要 Node 22.5 以上，它会帮你检查。
+
+## 用 Claude Desktop 装，一步一步来
+
+Windows 和 Mac 都可以。不用装 Node，不用开 terminal，也不用开什么 port。
+
+**第 1 步：装 Claude Desktop**
+到 [claude.ai/download](https://claude.ai/download) 下载，装好之后登入。
+
+**第 2 步：下载安装 file**
+到 [Releases](https://github.com/AIBE13/whatsapp-mcp-desktop/releases/latest) 下载 `whatsapp-mcp-desktop.mcpb`。
+
+**第 3 步：装进 Claude**
+Double-click 这个 file，Claude 会打开，按 **Install**。
+没反应的话：打开 Claude > Settings > Extensions，把 file 拖进去。
+
+**第 4 步：连接 WhatsApp**
+在 Claude 开一个新 chat，讲：**connect my WhatsApp** (讲 "连接我的 WhatsApp" 也可以)
+浏览器会自己开一页 QR。
+
+**第 5 步：扫 QR**
+手机打开 WhatsApp > Settings > Linked devices > Link a device (Android 是右上角 ⋮ > Linked devices)，扫那一页的 QR。
+QR 大约 20 秒会自己换一次，不用 refresh。页面写 **Connected** 就好了。
+
+**第 6 步：试一下**
+回去 Claude 问：**总结我今天的 WhatsApp**
+
+## 你可以这样问
+
+| 你讲 | Claude 会 |
+|---|---|
+| 我的 WhatsApp 连着吗？ | 告诉你连接状况 |
+| 总结我今天的 WhatsApp | 读今天的讯息，写重点给你 |
+| 找 invoice | 搜你的讯息 |
+| Ahmad 发的那张图是什么？ | 看那张图 |
+| Ahmad 的语音讲什么？ | 把语音转成文字 (要 key，看下面) |
+| Mei 发的 video 是什么？ | 讲 video 里面有什么、讲了什么 (要 Gemini key) |
+| 回 Ahmad：OK, noted | 先给你看讯息，等你 OK，才慢慢发出去 (要先打开发讯息功能) |
+| Ahmad 发的 invoice 总数多少？ | 读 PDF 里面的字 |
+| 把那个 PDF 存起来 | 存去 Downloads > WhatsApp MCP |
+| 把 Supplier group 所有 invoice 存起来 | 那个 chat 符合的 file 全部存进同一个 folder |
+| 开 WhatsApp 设定页 | 打开设定页 |
+| 重新连接我的 WhatsApp | 出新的 QR，重新连或换号码 |
+
+## File 和文件
+
+照片一收到就存起来。其他 file (PDF、Word、Excel、语音、video) 要你问的时候才去 WhatsApp 拿，所以那时 WhatsApp 要连着。
+
+- **AI 拿到原本的 file**：一个 file，或者整个 chat 的 file 一次拿 (文件、照片、video、语音)，存去 Downloads > WhatsApp MCP，用对方原本的 file 名字。存在那里的 file 没有加密。
+- **AI 自己打开来读**：用 Claude Code 的话，Claude 会用它自己的工具打开这些 file (PDF、Word、Excel、照片…)，自己决定怎样整理、总结。例子："把 Supplier group 所有 file 拿出来，总结那些 invoice"。
+- 用 Claude Desktop 的话，它打不开电脑里的 file，不过 PDF 和文字 file 里面写什么，Claude 还是读得到。
+- **放去别的地方**：每个存好的 file 都会给完整路径和 SHA-256，别的 connector 就可以接手。例子：Claude 有连 Google Drive 的话，讲 "把 Supplier group 所有 invoice 存起来，放进我 Drive 的 Invoices folder"。
+- File 最大 25MB (video 100MB)。太旧的 file WhatsApp 可能已经没有了，会写 skipped。
+
+## 设定页
+
+跟 Claude 讲 **开 WhatsApp 设定页**。上面看得到：
+
+- **Connection**：连着没有、你的号码、几时连上的
+- **Groups、Direct chats、Messages**：同步了多少个 group、多少个 chat、多少则讯息，从哪一天开始
+- **Last update**：最新一则讯息的时间
+- **Last 7 days**：一天一格，有断线就是红色，写断了多久
+- **Storage**：讯息存几天、现在最旧的是哪一天
+
+也可以改：
+
+- **Keep messages for**：存 7、14、30 (默认) 或 90 天。更旧的会自动删掉。
+- **Country code**：讲 0 开头的号码时用 (马来西亚 60、新加坡 65、英国 44)。都用完整号码的话可以留空。
+- **Disconnect alerts**：断线 3 分钟还没连回去，或者要重新扫码，电脑会跳通知。按 **Test alert** 可以先看看。
+
+## 发讯息 (可以不用，默认关着)
+
+装好之后，Claude 只能读。要 Claude 帮你发 WhatsApp 讯息的话，要你自己打开：
+
+1. 打开设定页 (跟 Claude 讲 **开 WhatsApp 设定页**)。
+2. 在 **Sending** 那里按 **Turn on sending**。
+3. 看完警告，打勾，再按 **Turn on sending**。
+
+**打开之前先看清楚：**
+- **你的号码有机会被封。** WhatsApp 不准非官方的程序发讯息。可能封几天，也可能永久封。风险自负。
+- 降低风险的建议 (照做也不保证不会被封)：慢慢发，一次几个就好；只发给认识你的人；不要大量发、不要发广告、不要同一段字发给很多人；用副号；有人 block 你或 WhatsApp 警告你就停。
+- 程序自己也会放慢：一次一个，每个之间会停一下，发之前先 "typing..."，每个钟头和每天也有上限。这只是刹车，不是保证安全。
+- 可以发给你本来就有的 chat，也可以发给任何有 WhatsApp 的号码 (写国家 code，比如 +60...)。只能发文字。新号码会先查有没有 WhatsApp 才发。
+- Claude 每次都要先给你看讯息和发给谁，你 OK 了才发。别人的讯息可能会想骗 Claude 帮它发东西，不是你要发的，不要按 OK。
+- 设定页看得到每个讯息：等着发、发了、还是失败。按 **Turn off** 会停掉所有还没发的。
+
+## 语音和 video (可以不用)
+
+照片 Claude 自己看得到，但是语音它听不到、video 它看不到。在设定页贴一个 API key 就可以了。
+
+| Key | 可以做 | 去哪里拿 |
+|---|---|---|
+| Google Gemini | 语音和 video | [aistudio.google.com/apikey](https://aistudio.google.com/apikey) |
+| OpenAI | 只有语音 | [platform.openai.com/api-keys](https://platform.openai.com/api-keys) |
+
+1. 打开设定页 (跟 Claude 讲 **开 WhatsApp 设定页**)。
+2. 在 **Voice notes and videos** 那里贴 key，按 **Save key**。它会先问 Google 或 OpenAI 这个 key 能不能用，能用才存。
+3. 两个 key 都有的话，在 **Voice notes with** 选用哪一个来转语音。
+
+要知道的：
+- 只有你问的那一个 file 会送出去，而且只送去你存了 key 的那一家。
+- 每个答案都会加密存起来，同一个 file 再问不用再付钱。
+- Key 加密存在你的电脑，页面只显示最后 4 个字。
+- 用 Google 免费的 key 的话，Google 有可能拿你送的东西去改进他们的产品。用付费的 key 就不会。
+- 用 key 会从那一家的户口扣钱，一个语音通常很便宜。
+
+## 在哪里跑 (几时会停)
+
+它装在哪一部电脑，就在那部电脑跑。那部电脑开着，才收得到讯息。
+
+| 装在 | 几时收讯息 |
+|---|---|
+| 你自己的电脑，用 Claude Desktop | Claude Desktop 开着的时候 |
+| 你自己的电脑，用 Claude Code | 在背后一直收，关掉 Claude Code 也继续，电脑关机才停。电脑重开之后，下一次打开 Claude Code 才会再开始 |
+| 一直开着的 virtual 电脑 (你的 AI agent 或 bot 用的云端电脑) | 一直收，只要那部电脑开着 |
+
+- 电脑关机、sleep 或断网：那段时间收不到。再连上的时候，WhatsApp 会把错过的讯息送进来，设定页会写 "Caught up N messages"。关掉大约 14 天的话，WhatsApp 会踢掉连接，要重新扫。
+- 装在 virtual 电脑的话，照 [AGENTS.md](AGENTS.md) 的 Claude Code 步骤装。要扫 QR 的时候，你要看得到那部电脑的浏览器一次 (它的画面或 remote desktop)。
+
+## 更新
+
+- **Claude Desktop**：到 Releases 下载新的 `whatsapp-mcp-desktop.mcpb`，一样 double-click 装。WhatsApp 连接和讯息都还在，不用重新扫码。
+- **Claude Code**：讲 "update WhatsApp MCP to the latest version: https://github.com/AIBE13/whatsapp-mcp-desktop"。步骤在 [AGENTS.md](AGENTS.md)。
+
+每个 Release 都写着安装 file 的 SHA-256，你或者你的 AI 可以对一对，确认 file 没有被换过。
+
+## 出问题的时候
+
+| 你看到 | 怎样做 |
+|---|---|
+| Double-click 没反应 | Claude > Settings > Extensions，把 file 拖进去 |
+| QR 页没有开 | 再跟 Claude 讲一次 "connect my WhatsApp"，它也会给你 link 自己开 |
+| 页面写 **Not reachable** 或 **Can't reach the program** | 打开 Claude，再 refresh 那一页 |
+| 设定页写 **Needs a new scan** | 手机那边取消了连接。讲 "重新连接我的 WhatsApp"，再扫一次 |
+| 设定页一直写 **Disconnected** | 先看网络，再按 **Reconnect now** |
+| 很久没上线之后收不到新讯息 | 手机大约 14 天没上线，WhatsApp 会踢掉连接，要重新扫 |
+| 设定页存不进 key | 页面会写原因 (通常是 key 不对)，去那一家的网站重新 copy |
+| Claude 说 key 被拒绝或没有 credit | 去那一家的网站看 key、加 credit，或者换一个 key |
+
+出问题时，Claude 可以读 `你的用户 folder/WhatsApp MCP/helper.log` 帮你看。这个 log 不会有讯息内容。
+
+## 先知道
+
+- **不是官方的。** 它用 WhatsApp Web 一样的方式连 (linked device)。WhatsApp 不准非官方的程序，号码有机会被封。只读 (默认) 的风险比较低，但不是零；打开发讯息风险会更高。能用副号就用副号。
+- **讯息是别人写的。** Claude 被规定不能照讯息里面的指示做事。不过讯息叫你做什么之前，还是自己先看清楚。
+- **只连你自己的号码。**
+- **几时收讯息。** 只有它在跑的那部电脑开着才收得到。看上面 "在哪里跑"。
+- **资料在哪里。** `你的用户 folder/WhatsApp MCP`，加密的。开锁的钥匙也在同一部电脑，所以能用这部电脑的人也读得到。
+- 存去 Downloads 的 file 没有加密。
+- 除了 WhatsApp 本身，什么都不会送上网。只有你存了 key、又问了语音或 video，那个 file 才会送去 Gemini 或 OpenAI。
+
+## 删除
+
+1. 手机：WhatsApp > Linked devices > 点 **WhatsApp MCP** > Log out
+2. Claude > Settings > Extensions > 删掉 **WhatsApp MCP**。Claude Code：`claude mcp remove whatsapp`
+3. 删掉 `你的用户 folder/WhatsApp MCP` 这个 folder
+
+## 给开发的人
+
+开发的说明在 [README.md](README.md) 最下面 (英文)。
+
+MIT License。用到的别人的软件和 license 写在安装 file 里面的 `THIRD_PARTY_NOTICES.txt`。跟 WhatsApp、Meta、Google、OpenAI、Anthropic 都没有关系。
